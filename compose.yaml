@@ -13,5 +13,14 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
+  php:
+    build:
+      context: .
+    container_name: php
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+
 volumes:
   mysql-data:
