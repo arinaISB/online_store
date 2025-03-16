@@ -7,9 +7,6 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20250314145629 extends AbstractMigration
 {
     private const TABLE_PRODUCTS = 'products';
@@ -20,7 +17,7 @@ final class Version20250314145629 extends AbstractMigration
     private const TABLE_ORDER_ITEMS = 'order_items';
     private const TABLE_ORDER_STATUS_TRACKING = 'order_status_tracking';
     private const TABLE_REPORTS = 'reports';
-    private const TABLE_GROUPS = 'user_groups';
+    private const TABLE_USER_GROUPS = 'user_groups';
 
     public function getDescription(): string
     {
@@ -29,10 +26,16 @@ final class Version20250314145629 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('CREATE TABLE ' . self::TABLE_USER_GROUPS . ' (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            group_name VARCHAR(50) NOT NULL,
+            UNIQUE INDEX UNIQ_GROUPS_NAME (group_name)
+        )');
+
         $this->addSql('CREATE TABLE ' . self::TABLE_PRODUCTS . ' (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
-            description TEXT,
+            description VARCHAR(255),
             cost INT NOT NULL,
             tax INT NOT NULL,
             weight INT NOT NULL,
@@ -54,7 +57,8 @@ final class Version20250314145629 extends AbstractMigration
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
             UNIQUE INDEX UNIQ_USERS_EMAIL (email),
-            UNIQUE INDEX UNIQ_USERS_PHONE (phone)
+            UNIQUE INDEX UNIQ_USERS_PHONE (phone),
+            CONSTRAINT FK_USERS_GROUP FOREIGN KEY (group_id) REFERENCES ' . self::TABLE_USER_GROUPS . ' (id) ON DELETE CASCADE
         )');
 
         $this->addSql('CREATE TABLE ' . self::TABLE_ORDERS . ' (
@@ -62,7 +66,7 @@ final class Version20250314145629 extends AbstractMigration
             user_id INT NOT NULL,
             notification_type VARCHAR(255),
             total_cost INT NOT NULL,
-            delivery_address TEXT DEFAULT NULL,
+            delivery_address VARCHAR(255) DEFAULT NULL,
             delivery_type VARCHAR(255) NOT NULL,
             kladr_id INT DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -76,7 +80,7 @@ final class Version20250314145629 extends AbstractMigration
             user_id INT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-            INDEX IDX_CARTS_USER (user_id),
+            UNIQUE INDEX IDX_CARTS_USER (user_id),
             CONSTRAINT FK_CARTS_USER FOREIGN KEY (user_id) REFERENCES ' . self::TABLE_USERS . ' (id) ON DELETE CASCADE
         )');
 
@@ -115,7 +119,8 @@ final class Version20250314145629 extends AbstractMigration
             created_by INT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             INDEX IDX_ORDER_STATUS_TRACKING_ORDER (order_id),
-            CONSTRAINT FK_ORDER_STATUS_TRACKING_ORDER FOREIGN KEY (order_id) REFERENCES ' . self::TABLE_ORDERS . ' (id) ON DELETE CASCADE
+            CONSTRAINT FK_ORDER_STATUS_TRACKING_ORDER FOREIGN KEY (order_id) REFERENCES ' . self::TABLE_ORDERS . ' (id) ON DELETE CASCADE,
+            CONSTRAINT FK_ORDER_STATUS_TRACKING_CREATED_BY FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE RESTRICT
         )');
 
         $this->addSql('CREATE TABLE ' . self::TABLE_REPORTS . ' (
@@ -124,12 +129,6 @@ final class Version20250314145629 extends AbstractMigration
             file_path VARCHAR(255) NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
-        )');
-
-        $this->addSql('CREATE TABLE ' . self::TABLE_GROUPS . ' (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            group_name VARCHAR(50) NOT NULL,
-            UNIQUE INDEX UNIQ_GROUPS_NAME (group_name)
         )');
     }
 
@@ -143,6 +142,6 @@ final class Version20250314145629 extends AbstractMigration
         $this->addSql('DROP TABLE ' . self::TABLE_USERS);
         $this->addSql('DROP TABLE ' . self::TABLE_PRODUCTS);
         $this->addSql('DROP TABLE ' . self::TABLE_REPORTS);
-        $this->addSql('DROP TABLE ' . self::TABLE_GROUPS);
+        $this->addSql('DROP TABLE ' . self::TABLE_USER_GROUPS);
     }
 }
