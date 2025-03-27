@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
+use App\Repository\ReportRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
+#[ORM\Entity(repositoryClass: ReportRepository::class)]
 class Report
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'uuid')]
+    #[ORM\Column(type: 'uuid', unique: true)]
     private string $uuid;
 
     #[ORM\Column(length: 20)]
@@ -20,6 +22,11 @@ class Report
 
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
+
+    public function __construct()
+    {
+        $this->uuid = Uuid::v4();
+    }
 
     public function getUuid(): int
     {

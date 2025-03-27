@@ -26,7 +26,7 @@ class Order
     #[ORM\OneToMany(targetEntity: OrderStatusTracking::class, mappedBy: 'order')]
     private Collection $statusTracking;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 20)]
     private string $notificationType;
 
     #[ORM\Column]
