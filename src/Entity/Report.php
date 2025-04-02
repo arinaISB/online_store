@@ -23,9 +23,12 @@ class Report
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
-    public function __construct()
+    public function __construct(string $status, string $filePath)
     {
         $this->uuid = Uuid::v4();
+        $this->status = $status;
+        $this->filePath = $filePath;
+        $this->createdAt = new DateTimeImmutable();
     }
 
     public function getUuid(): int

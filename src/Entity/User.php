@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -31,13 +31,25 @@ class User
     private string $groupName;
 
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
-    private Collection $orders;
+    private ArrayCollection $orders;
 
     #[ORM\Column]
     private DateTimeImmutable $created_at;
 
     #[ORM\Column]
     private DateTimeImmutable $updated_at;
+
+    public function __construct(string $name, string $email, string $phone, string $password, string $groupName)
+    {
+        $this->name = $name;
+        $this->email = $email;
+        $this->phone = $phone;
+        $this->password = $password;
+        $this->groupName = $groupName;
+        $this->created_at = new DateTimeImmutable();
+        $this->updated_at = new DateTimeImmutable();
+        $this->orders = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -128,7 +140,7 @@ class User
         return $this;
     }
 
-    public function getOrders(): Collection
+    public function getOrders(): ArrayCollection
     {
         return $this->orders;
     }

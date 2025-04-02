@@ -34,6 +34,16 @@ class OrderItem
     #[ORM\Column]
     private DateTimeImmutable $updatedAt;
 
+    public function __construct(Order $order, Product $product, int $price, int $quantity)
+    {
+        $this->order = $order;
+        $this->product = $product;
+        $this->price = $price;
+        $this->quantity = $quantity;
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -97,5 +107,4 @@ class OrderItem
     {
         return $this->product;
     }
-
 }

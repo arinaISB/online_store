@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CartRepository;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
@@ -20,13 +20,21 @@ class Cart
     private User $user;
 
     #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'cart')]
-    private Collection $cartItems;
+    private ArrayCollection $cartItems;
 
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
     #[ORM\Column]
     private DateTimeImmutable $updatedAt;
+
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+        $this->cartItems = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -62,7 +70,7 @@ class Cart
         return $this->user;
     }
 
-    public function getCartItems(): Collection
+    public function getCartItems(): ArrayCollection
     {
         return $this->cartItems;
     }

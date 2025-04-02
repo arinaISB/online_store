@@ -47,6 +47,29 @@ class Product
     #[ORM\Column]
     private DateTimeImmutable $updatedAt;
 
+    public function __construct(
+        string $name,
+        int $cost,
+        int $tax,
+        int $weight,
+        int $height,
+        int $width,
+        int $length,
+        ?string $description = null
+    ) {
+        $this->name = $name;
+        $this->cost = $cost;
+        $this->tax = $tax;
+        $this->weight = $weight;
+        $this->height = $height;
+        $this->width = $width;
+        $this->length = $length;
+        $this->description = $description;
+        $this->version = 1;
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
     public function getId(): int
     {
         return $this->id;

@@ -31,6 +31,15 @@ class CartItem
     #[ORM\Column]
     private DateTimeImmutable $updatedAt;
 
+    public function __construct(Cart $cart, Product $product, int $quantity)
+    {
+        $this->cart = $cart;
+        $this->product = $product;
+        $this->quantity = $quantity;
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
     public function getId(): int
     {
         return $this->id;

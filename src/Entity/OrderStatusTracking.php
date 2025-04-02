@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\OrderStatus;
 use App\Repository\OrderStatusTrackingRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,25 +19,34 @@ class OrderStatusTracking
     #[ORM\JoinColumn(name: 'created_by', referencedColumnName: 'id')]
     private User $createdBy;
 
-    #[ORM\ManyToOne(targetEntity: Order::class)]
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'statusTracking')]
     #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
     private Order $order;
 
     #[ORM\Column(length: 20)]
-    private string $oldStatus;
+    private OrderStatus $oldStatus;
 
     #[ORM\Column(length: 20)]
-    private string $newStatus;
+    private OrderStatus $newStatus;
 
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
+
+    public function __construct(Order $order, User $createdBy, OrderStatus $oldStatus, OrderStatus $newStatus)
+    {
+        $this->order = $order;
+        $this->createdBy = $createdBy;
+        $this->oldStatus = $oldStatus;
+        $this->newStatus = $newStatus;
+        $this->createdAt = new DateTimeImmutable();
+    }
 
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getOldStatus(): string
+    public function getOldStatus(): OrderStatus
     {
         return $this->oldStatus;
     }
@@ -50,7 +60,6 @@ class OrderStatusTracking
     {
         $this->createdBy = $createdBy;
 
-
         return $this;
     }
 
@@ -61,22 +70,29 @@ class OrderStatusTracking
     }
 
 
-    public function setOldStatus(string $oldStatus): static
+    public function setOrder(Order $order): static
     {
-        $this->oldStatus = $oldStatus;
+        $this->order = $order;
 
         return $this;
     }
 
-    public function getNewStatus(): string
+    public function setOldStatus(OrderStatus $oldStatus): static
+    {
+        $this->oldStatus = $oldStatus;
+        
+        return $this;
+    }
+
+    public function getNewStatus(): OrderStatus
     {
         return $this->newStatus;
     }
 
-    public function setNewStatus(string $newStatus): static
+    public function setNewStatus(OrderStatus $newStatus): static
     {
         $this->newStatus = $newStatus;
-
+        
         return $this;
     }
 

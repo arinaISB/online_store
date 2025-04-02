@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use App\Enum\OrderNotificationType;
 use App\Repository\OrderRepository;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -21,13 +22,13 @@ class Order
     private User $user;
 
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order')]
-    private Collection $orderItems;
+    private ArrayCollection $orderItems;
 
     #[ORM\OneToMany(targetEntity: OrderStatusTracking::class, mappedBy: 'order')]
-    private Collection $statusTracking;
+    private ArrayCollection $statusTracking;
 
     #[ORM\Column(length: 20)]
-    private string $notificationType;
+    private OrderNotificationType $notificationType;
 
     #[ORM\Column]
     private int $totalCost;
@@ -47,17 +48,37 @@ class Order
     #[ORM\Column]
     private DateTimeImmutable $updatedAt;
 
+    public function __construct(
+        User $user,
+        OrderNotificationType $notificationType,
+        int $totalCost,
+        string $deliveryType,
+        ?string $deliveryAddress = null,
+        ?int $kladrId = null
+    ) {
+        $this->user = $user;
+        $this->notificationType = $notificationType;
+        $this->totalCost = $totalCost;
+        $this->deliveryType = $deliveryType;
+        $this->deliveryAddress = $deliveryAddress;
+        $this->kladrId = $kladrId;
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+        $this->orderItems = new ArrayCollection();
+        $this->statusTracking = new ArrayCollection();
+    }
+
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getNotificationType(): string
+    public function getNotificationType(): OrderNotificationType
     {
         return $this->notificationType;
     }
 
-    public function setNotificationType(string $notificationType): static
+    public function setNotificationType(OrderNotificationType $notificationType): static
     {
         $this->notificationType = $notificationType;
 
@@ -146,17 +167,16 @@ class Order
     {
         $this->user = $user;
 
-
         return $this;
     }
 
-    public function getOrderItems(): Collection
+    public function getOrderItems(): ArrayCollection
     {
         return $this->orderItems;
     }
 
 
-    public function getStatusTracking(): Collection
+    public function getStatusTracking(): ArrayCollection
     {
         return $this->statusTracking;
     }
