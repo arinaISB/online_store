@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Table(name: 'products')]
 class Product
 {
     #[ORM\Id]
@@ -18,7 +19,7 @@ class Product
     private string $name;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $description = null;
+    private ?string $description;
 
     #[ORM\Column]
     private int $cost;

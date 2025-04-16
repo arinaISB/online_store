@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
+#[ORM\Table(name: 'cart_items')]
 class CartItem
 {
     #[ORM\Id]
