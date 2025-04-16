@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderStatusTrackingRepository::class)]
+#[ORM\Table(name: 'order_status_tracking')]
 class OrderStatusTracking
 {
     #[ORM\Id]
