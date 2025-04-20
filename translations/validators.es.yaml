@@ -1,0 +1,18 @@
+user:
+  registration:
+    name:
+      not_blank: 'Se requiere nombre'
+      min_length: 'El nombre debe tener al menos {{ limit }} caracteres'
+      max_length: 'El nombre no puede tener más de {{limit }} caracteres'
+    email:
+      not_blank: 'Se requiere correo electrónico'
+      invalid: 'Ingrese una dirección de correo electrónico válida'
+    phone:
+      not_blank: 'Se requiere un número de teléfono'
+      invalid_format: 'El teléfono debe estar en formato internacional (por ejemplo, +1234567890)'
+    password:
+      not_blank: 'Se requiere contraseña'
+      min_length: 'La contraseña debe tener al menos {{limit }} caracteres'
+    password_confirmation:
+      not_blank: 'Se requiere confirmación de contraseña'
+      passwords_mismatch: 'Las contraseñas no coinciden'

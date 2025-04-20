@@ -4,86 +4,38 @@ namespace App\Dto;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class UserRegistrationDto
+readonly class UserRegistrationDto
 {
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 2, max: 255)]
-    private string $name;
-
-    #[Assert\NotBlank]
-    #[Assert\Email]
-    private string $email;
-
-    #[Assert\NotBlank]
-    #[Assert\Regex(
-        pattern: '/^\\+?[1-9][0-9]{7,14}$/',
-        message: 'Phone number must be in international format (e.g., +1234567890)'
-    )]
-    private string $phone;
-
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 8)]
-    private string $password;
-
-    #[Assert\NotBlank]
-    #[Assert\Expression(
-        "this.getPassword() === this.getPasswordConfirmation()",
-        message: "Passwords do not match"
-    )]
-    private string $passwordConfirmation;
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-        return $this;
-    }
-
-    public function getPhone(): string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(string $phone): self
-    {
-        $this->phone = $phone;
-        return $this;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-        return $this;
-    }
-
-    public function getPasswordConfirmation(): string
-    {
-        return $this->passwordConfirmation;
-    }
-
-    public function setPasswordConfirmation(string $passwordConfirmation): self
-    {
-        $this->passwordConfirmation = $passwordConfirmation;
-        return $this;
+    public function __construct(
+        #[Assert\NotBlank(message: 'user.registration.name.not_blank')]
+        #[Assert\Length(
+            min: 2,
+            max: 255,
+            minMessage: 'user.registration.name.min_length',
+            maxMessage: 'user.registration.name.max_length'
+        )]
+        public string $name,
+        #[Assert\NotBlank(message: 'user.registration.email.not_blank')]
+        #[Assert\Email(message: 'user.registration.email.invalid')]
+        public string $email,
+        #[Assert\NotBlank(message: 'user.registration.phone.not_blank')]
+        #[Assert\Regex(
+            pattern: '/^\\+?[1-9][0-9]{7,14}$/',
+            message: 'user.registration.phone.invalid_format'
+        )]
+        public string $phone,
+        #[Assert\NotBlank(message: 'user.registration.password.not_blank')]
+        #[Assert\Length(
+            min: 8,
+            minMessage: 'user.registration.password.min_length'
+        )]
+        public string $password,
+        #[Assert\NotBlank(message: 'user.registration.password_confirmation.not_blank')]
+        #[Assert\Expression(
+            "this.password === this.passwordConfirmation",
+            message: "user.registration.password_confirmation.passwords_mismatch"
+        )]
+        public string $passwordConfirmation,
+    ) {
     }
 }

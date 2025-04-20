@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
-#[ORM\Table(name: 'carts')]
+#[ORM\Table(name: 'carts', schema: 'cart')]
 class Cart
 {
     #[ORM\Id]
@@ -16,11 +16,11 @@ class Cart
     #[ORM\Column]
     private int $id;
 
-    #[ORM\OneToOne(targetEntity: User::class, inversedBy: 'cart')]
+    #[ORM\OneToOne(inversedBy: 'cart', targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private User $user;
 
-    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'cart')]
+    #[ORM\OneToMany(mappedBy: 'cart', targetEntity: CartItem::class)]
     private ArrayCollection $cartItems;
 
     #[ORM\Column]

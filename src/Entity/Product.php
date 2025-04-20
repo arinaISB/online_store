@@ -7,7 +7,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ORM\Table(name: 'products')]
+#[ORM\Table(name: 'products', schema: 'catalog')]
 class Product
 {
     #[ORM\Id]
