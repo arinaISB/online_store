@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Controller;
+namespace Tests\Functional\Controller;
 
 use App\Dto\UserRegistrationDto;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

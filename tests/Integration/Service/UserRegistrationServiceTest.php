@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Service;
+namespace Tests\Integration\Service;
 
 use App\Dto\UserRegistrationDto;
 use App\Entity\User;
