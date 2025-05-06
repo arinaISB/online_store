@@ -6,17 +6,24 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     libpq-dev \
+    librabbitmq-dev \
+    libssl-dev \
+    supervisor \
     && docker-php-ext-install pdo pdo_pgsql
+
+RUN pecl install amqp \
+    && docker-php-ext-enable amqp
 
 # Установка Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN chmod +x /usr/local/bin/composer
 
-WORKDIR /var/www/html
-COPY --chown=www-data:www-data . /var/www/html
+RUN mkdir -p /var/log/supervisor
 
-USER www-data
+WORKDIR /var/www/html
+COPY . /var/www/html
+COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN composer install
 
-CMD ["php-fpm"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Enum\GroupName;
 use App\Exception\UserAlreadyExistsException;
 use App\Repository\UserRepository;
+use App\Service\NotificationService;
 use App\Service\UserRegistrationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -21,6 +22,7 @@ class UserRegistrationServiceTest extends TestCase
     private UserPasswordHasherInterface $passwordHasherMock;
     private EntityManagerInterface $entityManagerMock;
     private JWTTokenManagerInterface $jwtManagerMock;
+    private NotificationService $notificationServiceMock;
     private UserRegistrationDto $validDto;
 
     /**
@@ -32,12 +34,14 @@ class UserRegistrationServiceTest extends TestCase
         $this->passwordHasherMock = $this->createMock(UserPasswordHasherInterface::class);
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->jwtManagerMock = $this->createMock(JWTTokenManagerInterface::class);
+        $this->notificationService = $this->createMock(NotificationService::class);
 
         $this->service = new UserRegistrationService(
             $this->userRepositoryMock,
             $this->passwordHasherMock,
             $this->entityManagerMock,
-            $this->jwtManagerMock
+            $this->jwtManagerMock,
+            $this->notificationService
         );
 
         $this->validDto = new UserRegistrationDto(

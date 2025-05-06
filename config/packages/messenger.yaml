@@ -6,9 +6,6 @@ framework:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    use_notify: true
-                    check_delayed_interval: 60000
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
@@ -20,6 +17,9 @@ framework:
         buses:
             messenger.bus.default: []
 
+        serializer:
+            default_serializer: messenger.transport.symfony_serializer
+
         routing:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: async
             Symfony\Component\Notifier\Message\ChatMessage: async
@@ -27,3 +27,5 @@ framework:
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
+            'App\Message\UserRegistrationEmailNotificationMessage': async
+            'App\Message\UserRegistrationSmsNotificationMessage': async
