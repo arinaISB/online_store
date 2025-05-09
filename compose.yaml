@@ -18,13 +18,13 @@ services:
     build:
       context: .
     container_name: php
-    user: www-data
     volumes:
       - .:/var/www/html
     networks:
       - app-network
     depends_on:
       - postgres
+    command: supervisord -c /etc/supervisor/supervisord.conf
 
   nginx:
     image: nginx:alpine
@@ -38,6 +38,19 @@ services:
       - php
     networks:
       - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    networks:
+      - app-network
+
 
 volumes:
   postgres-data:

@@ -11,6 +11,7 @@ use App\Exception\UserAlreadyExistsException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserRegistrationService
@@ -20,6 +21,7 @@ class UserRegistrationService
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly EntityManagerInterface $entityManager,
         private readonly JWTTokenManagerInterface $jwtManager,
+        private readonly NotificationService $notificationService,
     ) {
     }
 
@@ -27,6 +29,7 @@ class UserRegistrationService
      * @param UserRegistrationDto $dto
      * @return string
      * @throws UserAlreadyExistsException
+     * @throws ExceptionInterface
      */
     public function register(UserRegistrationDto $dto): string
     {
@@ -50,6 +53,8 @@ class UserRegistrationService
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $this->notificationService->sendRegistrationNotification($dto);
 
         return $this->jwtManager->create($user);
     }
