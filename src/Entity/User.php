@@ -2,13 +2,18 @@
 
 namespace App\Entity;
 
+use App\Enum\GroupName;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+#[ORM\Table(name: 'users', schema: 'identity')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,20 +23,20 @@ class User
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private string $email;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, unique: true)]
     private string $phone;
 
     #[ORM\Column(length: 255)]
     private string $password;
 
     #[ORM\Column(length: 20)]
-    private string $groupName;
+    private GroupName $groupName;
 
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
-    private ArrayCollection $orders;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
+    private Collection $orders;
 
     #[ORM\Column]
     private DateTimeImmutable $created_at;
@@ -39,7 +44,7 @@ class User
     #[ORM\Column]
     private DateTimeImmutable $updated_at;
 
-    public function __construct(string $name, string $email, string $phone, string $password, string $groupName)
+    public function __construct(string $name, string $email, string $phone, string $password, GroupName $groupName)
     {
         $this->name = $name;
         $this->email = $email;
@@ -116,12 +121,12 @@ class User
         return $this;
     }
 
-    public function getGroupName(): string
+    public function getGroupName(): GroupName
     {
         return $this->groupName;
     }
 
-    public function setGroupName(string $groupName): static
+    public function setGroupName(GroupName $groupName): static
     {
         $this->groupName = $groupName;
 
@@ -143,5 +148,19 @@ class User
     public function getOrders(): ArrayCollection
     {
         return $this->orders;
+    }
+
+    public function getRoles(): array
+    {
+        return [$this->groupName->toRole()];
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->phone;
     }
 }

@@ -1,3 +1,8 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+registration:
+    path: /api/register
+    controller: App\Controller\RegistrationController::register
+    methods: [POST]

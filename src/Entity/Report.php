@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ReportRepository::class)]
+#[ORM\Table(name: 'reports', schema: 'report')]
 class Report
 {
     #[ORM\Id]

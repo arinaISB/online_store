@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
+#[ORM\Table(name: 'cart_items', schema: 'cart')]
 class CartItem
 {
     #[ORM\Id]
@@ -18,7 +19,7 @@ class CartItem
     #[ORM\JoinColumn(name: 'cart_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Cart $cart;
 
-    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'cartItems')]
+    #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'RESTRICT')]
     private Product $product;
 

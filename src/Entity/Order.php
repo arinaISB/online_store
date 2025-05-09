@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
-#[ORM\Table(name: '`order`')]
+#[ORM\Table(name: 'orders', schema: 'sale')]
 class Order
 {
     #[ORM\Id]
@@ -21,10 +21,10 @@ class Order
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private User $user;
 
-    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order')]
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderItem::class)]
     private ArrayCollection $orderItems;
 
-    #[ORM\OneToMany(targetEntity: OrderStatusTracking::class, mappedBy: 'order')]
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderStatusTracking::class)]
     private ArrayCollection $statusTracking;
 
     #[ORM\Column(length: 20)]

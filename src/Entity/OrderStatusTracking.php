@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderStatusTrackingRepository::class)]
+#[ORM\Table(name: 'order_status_tracking', schema: 'tracking')]
 class OrderStatusTracking
 {
     #[ORM\Id]
@@ -80,7 +81,7 @@ class OrderStatusTracking
     public function setOldStatus(OrderStatus $oldStatus): static
     {
         $this->oldStatus = $oldStatus;
-        
+
         return $this;
     }
 
@@ -92,7 +93,7 @@ class OrderStatusTracking
     public function setNewStatus(OrderStatus $newStatus): static
     {
         $this->newStatus = $newStatus;
-        
+
         return $this;
     }
 
