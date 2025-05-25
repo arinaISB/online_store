@@ -6,3 +6,6 @@ test-db-reset:
 test:
 	make test-db-reset
 	php bin/phpunit
+
+bash:
+	docker compose exec -it php bash
