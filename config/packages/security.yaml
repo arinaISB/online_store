@@ -1,21 +1,21 @@
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        App\Entity\User:
+        App\User\Entity\User:
             algorithm: 'auto'
             cost: 13
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
             entity:
-                class: App\Entity\User
+                class: App\User\Entity\User
                 property: phone
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         register:
-            pattern: ^/api/register
+            pattern: ^/api/user/register
             stateless: true
             security: false
         api:

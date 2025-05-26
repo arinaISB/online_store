@@ -3,7 +3,6 @@
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         backupGlobals="false"
          colors="true"
          bootstrap="tests/bootstrap.php"
 >
@@ -15,7 +14,7 @@
         <env name="APP_DEBUG" value="1" />
         <env name="APP_SECRET" value="s$cretf0rt3st" />
         <env name="SHELL_VERBOSITY" value="-1" />
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[direct]=0&amp;max[indirect]=0" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
         <env name="DATABASE_URL" value="postgresql://user:userpassword@localhost:5432/online_store_test?serverVersion=13&amp;charset=utf8" />
     </php>
 

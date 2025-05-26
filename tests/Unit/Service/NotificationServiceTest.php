@@ -1,46 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Service;
 
-use App\Dto\UserRegistrationDto;
-use App\Message\UserRegistrationSmsNotificationMessage;
-use App\Service\NotificationService;
-use PHPUnit\Framework\MockObject\Exception;
+use App\User\Controller\Request\UserRegistrationRequest;
+use App\User\Message\UserRegistrationSmsNotificationMessage;
+use App\User\Service\NotificationService;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\TraceableMessageBus;
 
-class NotificationServiceTest extends TestCase
+final class NotificationServiceTest extends TestCase
 {
     /**
-     * @throws Exception
      * @throws ExceptionInterface
      */
     public function testSendRegistrationNotificationDispatchesSmsMessage(): void
     {
-        $dto = new UserRegistrationDto(
+        $dto = new UserRegistrationRequest(
             'Notification User',
             'test@test.com',
             '+1234567890',
             'password',
-            'password'
+            'password',
         );
 
-        $messageBusMock = $this->createMock(MessageBusInterface::class);
+        $realMessageBus = new MessageBus();
+        $traceableBus = new TraceableMessageBus($realMessageBus);
 
-        $messageBusMock
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                $this->callback(function ($message) use ($dto) {
-                    return $message instanceof UserRegistrationSmsNotificationMessage &&
-                        $message->getUserPhone() === $dto->phone;
-                })
-            )
-            ->willReturn(new Envelope(new \stdClass()));
-
-        $notificationService = new NotificationService($messageBusMock);
+        $notificationService = new NotificationService($traceableBus);
         $notificationService->sendRegistrationNotification($dto);
+
+        $dispatchedMessages = $traceableBus->getDispatchedMessages();
+        /** @var UserRegistrationSmsNotificationMessage $sentMessage */
+        $sentMessage = $dispatchedMessages[0]['message'];
+
+        self::assertCount(1, $dispatchedMessages, '1 message must be sent');
+        self::assertInstanceOf(UserRegistrationSmsNotificationMessage::class, $sentMessage);
+        self::assertEquals($dto->phone, $sentMessage->getUserPhone());
     }
 }

@@ -1,8 +1,5 @@
-controllers:
-    resource: ../src/Controller/
-    type: attribute
-
-registration:
-    path: /api/register
-    controller: App\Controller\RegistrationController::register
-    methods: [POST]
+redirect:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        path: /api/docs
