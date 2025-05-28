@@ -15,13 +15,17 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         register:
-            pattern: ^/api/user/register
+            pattern: ^/api/users/register
             stateless: true
             security: false
         api:
             pattern: ^/api
             stateless: true
             jwt: ~
+
+    role_hierarchy:
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_ADMIN: ROLE_USER
 
         # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

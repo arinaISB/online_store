@@ -57,6 +57,7 @@ class Product
         int $height,
         int $width,
         int $length,
+        int $version,
         ?string $description = null,
         \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
         \DateTimeImmutable $updatedAt = new \DateTimeImmutable(),
@@ -69,7 +70,7 @@ class Product
         $this->width = $width;
         $this->length = $length;
         $this->description = $description;
-        $this->version = 1;
+        $this->version = $version;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
     }
