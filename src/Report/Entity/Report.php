@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Report\Entity;
 
 use App\Report\Repository\ReportRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
@@ -16,13 +17,13 @@ class Report
     #[ORM\Column(type: 'uuid', unique: true)]
     private Uuid $uuid;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: Types::STRING, length: 20)]
     private string $status;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $filePath;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
 
     public function __construct(

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Product\EventListener\ExceptionListener;
+use FOS\ElasticaBundle\Finder\PaginatedFinderInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function (ContainerConfigurator $container): void {
@@ -11,14 +11,7 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure();
 
-    $services->load('App\Product\\', __DIR__ . '/{Service,Controller,Repository}/*')
-        ->exclude([__DIR__ . '/*/Request'])
-        ->tag('controller.service_arguments');
+    $services->load('App\Product\\', __DIR__ . '/{Service,Controller,Repository,EventListener}/*');
 
-    $services
-        ->set(ExceptionListener::class)
-        ->tag('kernel.event_listener', [
-            'event' => 'kernel.exception',
-            'method' => '__invoke',
-        ]);
+    $services->alias(PaginatedFinderInterface::class, 'fos_elastica.finder.product');
 };

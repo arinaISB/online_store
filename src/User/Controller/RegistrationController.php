@@ -10,16 +10,17 @@ use App\User\Service\UserRegistrationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[AsController]
 final readonly class RegistrationController
 {
     public function __construct(
         private UserRegistrationService $registrationService,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws ExceptionInterface

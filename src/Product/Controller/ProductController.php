@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Product\Controller;
 
+use App\Product\Controller\Request\FindProductRequest;
 use App\Product\Controller\Request\ProductRequest;
 use App\Product\Entity\Product;
 use App\Product\Service\ProductService;
@@ -11,17 +12,19 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+#[AsController]
 final readonly class ProductController
 {
-    public function __construct(private ProductService $productService)
-    {
-    }
+    public function __construct(private ProductService $productService, private NormalizerInterface $serializer) {}
 
-    #[Route('', methods: [Request::METHOD_POST])]
+    #[Route('products', methods: [Request::METHOD_POST])]
     #[IsGranted('ROLE_ADMIN')]
     public function create(#[MapRequestPayload] ProductRequest $request): JsonResponse
     {
@@ -30,16 +33,33 @@ final readonly class ProductController
         return new JsonResponse(['product_id' => $product->getId()], Response::HTTP_CREATED);
     }
 
-    #[Route('', methods: [Request::METHOD_PUT])]
+    #[Route('products/{id}', methods: [Request::METHOD_PUT])]
     #[IsGranted('ROLE_ADMIN')]
-    public function update(#[MapRequestPayload] ProductRequest $request): JsonResponse
+    public function update(int $id, #[MapRequestPayload] ProductRequest $request): JsonResponse
     {
-        $product = $this->productService->update($request);
+        $product = $this->productService->update($id, $request);
 
         return new JsonResponse(['product_id' => $product->getId()], Response::HTTP_OK);
     }
 
-    #[Route('/{id}', methods: [Request::METHOD_GET])]
+    /**
+     * @throws ExceptionInterface
+     */
+    #[Route('products/search', methods: [Request::METHOD_GET])]
+    public function search(Request $request): JsonResponse
+    {
+        $request = new FindProductRequest(
+            $request->query->get('search'),
+            $request->query->get('minCost') ? (int) $request->query->get('minCost') : null,
+            $request->query->get('maxCost') ? (int) $request->query->get('maxCost') : null,
+        );
+
+        $response = $this->productService->search($request);
+
+        return new JsonResponse($this->serializer->normalize($response, 'json'), Response::HTTP_OK);
+    }
+
+    #[Route('products/{id}', methods: [Request::METHOD_GET])]
     public function get(#[MapEntity] Product $product): JsonResponse
     {
         return new JsonResponse([

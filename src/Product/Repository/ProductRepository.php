@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Product\Repository;
 
 use App\Product\Entity\Product;
+use App\Product\Exception\ProductNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,5 +22,16 @@ final class ProductRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Product::class);
+    }
+
+    public function get(int $id): Product
+    {
+        $product = $this->find($id);
+
+        if (!$product) {
+            throw ProductNotFoundException::withId($id);
+        }
+
+        return $product;
     }
 }

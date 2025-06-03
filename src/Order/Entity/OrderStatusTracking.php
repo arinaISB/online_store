@@ -7,6 +7,7 @@ namespace App\Order\Entity;
 use App\Order\Enum\OrderStatus;
 use App\Order\Repository\OrderStatusTrackingRepository;
 use App\User\Entity\User;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderStatusTrackingRepository::class)]
@@ -32,7 +33,7 @@ class OrderStatusTracking
     #[ORM\Column(enumType: OrderStatus::class)]
     private OrderStatus $newStatus;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
 
     public function __construct(

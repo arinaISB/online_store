@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use FOS\ElasticaBundle\FOSElasticaBundle;
 use Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -28,4 +29,5 @@ return [
     MakerBundle::class => ['dev' => true],
     LexikJWTAuthenticationBundle::class => ['all' => true],
     DAMADoctrineTestBundle::class => ['test' => true],
+    FOSElasticaBundle::class => ['all' => true],
 ];

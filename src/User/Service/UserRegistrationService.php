@@ -22,8 +22,7 @@ final readonly class UserRegistrationService
         private EntityManagerInterface $entityManager,
         private JWTTokenManagerInterface $jwtManager,
         private NotificationService $notificationService,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws UserAlreadyExistsException

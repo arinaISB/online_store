@@ -10,7 +10,5 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure();
 
-    $services->load('App\User\\', __DIR__ . '/{Service,Controller,Repository}/*')
-        ->exclude([__DIR__ . '/*/Request'])
-        ->tag('controller.service_arguments');
+    $services->load('App\User\\', __DIR__ . '/{Service,Controller,Repository}/*');
 };
