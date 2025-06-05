@@ -6,6 +6,7 @@ namespace App\Order\Entity;
 
 use App\Order\Repository\OrderItemRepository;
 use App\Product\Entity\Product;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderItemRepository::class)]
@@ -25,16 +26,16 @@ class OrderItem
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'RESTRICT')]
     private Product $product;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: Types::INTEGER)]
     private int $price;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: Types::INTEGER)]
     private int $quantity;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $updatedAt;
 
     public function __construct(

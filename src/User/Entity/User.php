@@ -23,16 +23,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private int $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
     private string $email;
 
-    #[ORM\Column(type: 'string', length: 20, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 20, unique: true)]
     private string $phone;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $password;
 
     #[ORM\Column(enumType: GroupName::class)]
@@ -165,9 +165,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return [$this->groupName->toRole()];
     }
 
-    public function eraseCredentials(): void
-    {
-    }
+    public function eraseCredentials(): void {}
 
     public function getUserIdentifier(): string
     {
