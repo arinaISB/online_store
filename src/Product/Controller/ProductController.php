@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -46,14 +47,8 @@ final readonly class ProductController
      * @throws ExceptionInterface
      */
     #[Route('products/search', methods: [Request::METHOD_GET])]
-    public function search(Request $request): JsonResponse
+    public function search(#[MapQueryString] FindProductRequest $request): JsonResponse
     {
-        $request = new FindProductRequest(
-            $request->query->get('search'),
-            $request->query->get('minCost') ? (int) $request->query->get('minCost') : null,
-            $request->query->get('maxCost') ? (int) $request->query->get('maxCost') : null,
-        );
-
         $response = $this->productService->search($request);
 
         return new JsonResponse($this->serializer->normalize($response, 'json'), Response::HTTP_OK);

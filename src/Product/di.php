@@ -11,7 +11,5 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure();
 
-    $services->load('App\Product\\', __DIR__ . '/{Service,Controller,Repository,EventListener}/*');
-
-    $services->alias(PaginatedFinderInterface::class, 'fos_elastica.finder.product');
+    $services->alias(\FOS\ElasticaBundle\Finder\HybridFinderInterface::class, 'fos_elastica.finder.product');
 };

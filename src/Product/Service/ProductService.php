@@ -6,20 +6,22 @@ namespace App\Product\Service;
 
 use App\Product\Controller\Request\FindProductRequest;
 use App\Product\Controller\Request\ProductRequest;
+use App\Product\Controller\Response\SearchResult;
 use App\Product\Entity\Product;
 use App\Product\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Elastica\Query;
 use Elastica\Query\BoolQuery;
-use Elastica\Query\MatchQuery;
+use Elastica\Query\Fuzzy;
 use Elastica\Query\Range;
-use FOS\ElasticaBundle\Finder\PaginatedFinderInterface;
+use FOS\ElasticaBundle\Finder\HybridFinderInterface;
 
 final readonly class ProductService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ProductRepository $productRepository,
-        private PaginatedFinderInterface $productFinder,
+        private HybridFinderInterface $productFinder,
     ) {}
 
     public function create(ProductRequest $request): Product
@@ -66,9 +68,11 @@ final readonly class ProductService
         $boolQuery = new BoolQuery();
 
         if (!empty($request->search)) {
-            $matchQuery = new MatchQuery();
-            $matchQuery->setField('name', $request->search);
-            $boolQuery->addMust($matchQuery);
+            $fuzzy = new Fuzzy('name', $request->search);
+            $fuzzy->setFieldOption('fuzziness', 'AUTO');
+            $fuzzy->setFieldOption('prefix_length', 2);
+            $fuzzy->setFieldOption('transpositions', true);
+            $boolQuery->addShould($fuzzy);
         }
 
         if ($request->minCost !== null || $request->maxCost !== null) {
@@ -80,6 +84,34 @@ final readonly class ProductService
             $boolQuery->addFilter($range);
         }
 
-        return $this->productFinder->find($boolQuery);
+        $query = new Query($boolQuery);
+        $query->setSize(20);
+        $query->setHighlight([
+            'fields' => [
+                'name' => ['fragment_size' => 150],
+                'description' => ['fragment_size' => 200],
+            ],
+        ]);
+
+        $hybridResults = $this->productFinder->findHybrid($query);
+
+        $results = [];
+        foreach ($hybridResults as $hybrid) {
+            $product = $hybrid->getTransformed();
+            $result = $hybrid->getResult();
+            $hit = $result->getHit();
+
+            if (!$product instanceof Product) {
+                continue;
+            }
+
+            $results[] = new SearchResult(
+                product: $hybrid->getTransformed(),
+                score: $hit['_score'] ?? 0.0,
+                highlight: $hit['highlight'] ?? [],
+            );
+        }
+
+        return $results;
     }
 }
