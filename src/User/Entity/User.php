@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\User\Entity;
 
+use App\Cart\Entity\Cart;
 use App\Order\Entity\Order;
 use App\User\Enum\GroupName;
 use App\User\Repository\UserRepository;
@@ -40,6 +41,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
     private Collection $orders;
+
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: Cart::class)]
+    private ?Cart $cart = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
@@ -155,7 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getOrders(): ArrayCollection
+    public function getOrders(): Collection
     {
         return $this->orders;
     }
@@ -170,5 +174,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->phone;
+    }
+
+    public function getCart(): ?Cart
+    {
+        return $this->cart;
+    }
+
+    public function setCart(Cart $cart): static
+    {
+        if ($this->cart !== $cart) {
+            $this->cart = $cart;
+            $cart->setUser($this);
+        }
+
+        return $this;
     }
 }

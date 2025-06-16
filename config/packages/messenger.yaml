@@ -29,3 +29,4 @@ framework:
             # 'App\Message\YourMessage': async
             'App\User\Message\UserRegistrationEmailNotificationMessage': async
             'App\User\Message\UserRegistrationSmsNotificationMessage': async
+            'App\Order\Message\OrderNotificationMessage': async

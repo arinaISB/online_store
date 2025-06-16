@@ -5,6 +5,8 @@ lexik_jwt_authentication:
         service: lexik_jwt_authentication.encoder.lcobucci
         signature_algorithm: 'HS256'
 
+    token_ttl: 10800
+
     token_extractors:
         authorization_header:
             enabled: true
