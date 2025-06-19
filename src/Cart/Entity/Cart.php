@@ -7,6 +7,7 @@ namespace App\Cart\Entity;
 use App\Cart\Repository\CartRepository;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -19,12 +20,12 @@ class Cart
     #[ORM\Column]
     private int $id;
 
-    #[ORM\OneToOne(targetEntity: User::class)]
+    #[ORM\OneToOne(inversedBy: 'cart', targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private User $user;
 
     #[ORM\OneToMany(mappedBy: 'cart', targetEntity: CartItem::class)]
-    private ArrayCollection $cartItems;
+    private Collection $cartItems;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
@@ -77,8 +78,30 @@ class Cart
         return $this->user;
     }
 
-    public function getCartItems(): ArrayCollection
+    public function setUser(User $user): static
+    {
+        if ($this->user !== $user) {
+            $this->user = $user;
+            $user->setCart($this);
+        }
+
+        return $this;
+    }
+
+    public function getCartItems(): Collection
     {
         return $this->cartItems;
+    }
+
+    public function addCartItem(CartItem $cartItem): void
+    {
+        $this->cartItems->add($cartItem);
+    }
+
+    public function removeCartItem(CartItem $cartItem): void
+    {
+        if ($this->cartItems->contains($cartItem)) {
+            $this->cartItems->removeElement($cartItem);
+        }
     }
 }

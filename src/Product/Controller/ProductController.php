@@ -36,9 +36,13 @@ final readonly class ProductController
 
     #[Route('products/{id}', methods: [Request::METHOD_PUT])]
     #[IsGranted('ROLE_ADMIN')]
-    public function update(int $id, #[MapRequestPayload] ProductRequest $request): JsonResponse
-    {
-        $product = $this->productService->update($id, $request);
+    public function update(
+        #[MapEntity(id: 'id')]
+        Product $product,
+        #[MapRequestPayload]
+        ProductRequest $request,
+    ): JsonResponse {
+        $product = $this->productService->update($product, $request);
 
         return new JsonResponse(['product_id' => $product->getId()], Response::HTTP_OK);
     }

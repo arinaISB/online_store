@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Order\Entity;
 
-use App\Order\Enum\OrderNotificationType;
+use App\Order\Enum\DeliveryType;
 use App\Order\Repository\OrderRepository;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,13 +26,10 @@ class Order
     private User $user;
 
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderItem::class)]
-    private ArrayCollection $orderItems;
+    private Collection $orderItems;
 
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderStatusTracking::class)]
-    private ArrayCollection $statusTracking;
-
-    #[ORM\Column(enumType: OrderNotificationType::class)]
-    private OrderNotificationType $notificationType;
+    private Collection $statusTracking;
 
     #[ORM\Column(type: Types::INTEGER)]
     private int $totalCost;
@@ -39,8 +37,8 @@ class Order
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $deliveryAddress;
 
-    #[ORM\Column(type: Types::STRING, length: 255)]
-    private string $deliveryType;
+    #[ORM\Column(length: 255, enumType: DeliveryType::class)]
+    private DeliveryType $deliveryType;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $kladrId;
@@ -53,16 +51,14 @@ class Order
 
     public function __construct(
         User $user,
-        OrderNotificationType $notificationType,
         int $totalCost,
-        string $deliveryType,
+        DeliveryType $deliveryType,
         ?string $deliveryAddress = null,
         ?int $kladrId = null,
         \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
         \DateTimeImmutable $updatedAt = new \DateTimeImmutable(),
     ) {
         $this->user = $user;
-        $this->notificationType = $notificationType;
         $this->totalCost = $totalCost;
         $this->deliveryType = $deliveryType;
         $this->deliveryAddress = $deliveryAddress;
@@ -76,18 +72,6 @@ class Order
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function getNotificationType(): OrderNotificationType
-    {
-        return $this->notificationType;
-    }
-
-    public function setNotificationType(OrderNotificationType $notificationType): static
-    {
-        $this->notificationType = $notificationType;
-
-        return $this;
     }
 
     public function getTotalCost(): int
@@ -114,12 +98,12 @@ class Order
         return $this;
     }
 
-    public function getDeliveryType(): string
+    public function getDeliveryType(): DeliveryType
     {
         return $this->deliveryType;
     }
 
-    public function setDeliveryType(string $deliveryType): static
+    public function setDeliveryType(DeliveryType $deliveryType): static
     {
         $this->deliveryType = $deliveryType;
 
@@ -174,13 +158,23 @@ class Order
         return $this;
     }
 
-    public function getOrderItems(): ArrayCollection
+    public function getOrderItems(): Collection
     {
         return $this->orderItems;
     }
 
-    public function getStatusTracking(): ArrayCollection
+    public function addOrderItem(OrderItem $item): void
+    {
+        $this->orderItems->add($item);
+    }
+
+    public function getStatusTracking(): Collection
     {
         return $this->statusTracking;
+    }
+
+    public function addStatusTracking(OrderStatusTracking $tracking): void
+    {
+        $this->statusTracking->add($tracking);
     }
 }

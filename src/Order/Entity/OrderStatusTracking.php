@@ -27,10 +27,10 @@ class OrderStatusTracking
     #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
     private Order $order;
 
-    #[ORM\Column(enumType: OrderStatus::class)]
-    private OrderStatus $oldStatus;
+    #[ORM\Column(length: 30, nullable: true, enumType: OrderStatus::class)]
+    private ?OrderStatus $oldStatus;
 
-    #[ORM\Column(enumType: OrderStatus::class)]
+    #[ORM\Column(length: 30, enumType: OrderStatus::class)]
     private OrderStatus $newStatus;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
@@ -39,8 +39,8 @@ class OrderStatusTracking
     public function __construct(
         Order $order,
         User $createdBy,
-        OrderStatus $oldStatus,
         OrderStatus $newStatus,
+        ?OrderStatus $oldStatus = null,
         \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
     ) {
         $this->order = $order;
@@ -55,7 +55,7 @@ class OrderStatusTracking
         return $this->id;
     }
 
-    public function getOldStatus(): OrderStatus
+    public function getOldStatus(): ?OrderStatus
     {
         return $this->oldStatus;
     }
@@ -84,7 +84,7 @@ class OrderStatusTracking
         return $this;
     }
 
-    public function setOldStatus(OrderStatus $oldStatus): static
+    public function setOldStatus(?OrderStatus $oldStatus): ?static
     {
         $this->oldStatus = $oldStatus;
 

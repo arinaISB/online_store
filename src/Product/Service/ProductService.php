@@ -44,10 +44,8 @@ final readonly class ProductService
         return $product;
     }
 
-    public function update(int $id, ProductRequest $request): Product
+    public function update(Product $product, ProductRequest $request): Product
     {
-        $product = $this->productRepository->get($id);
-
         $product->setName($request->name);
         $product->setCost($request->cost);
         $product->setTax($request->tax);

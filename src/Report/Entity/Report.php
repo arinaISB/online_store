@@ -27,11 +27,12 @@ class Report
     private \DateTimeImmutable $createdAt;
 
     public function __construct(
+        Uuid $uuid,
         string $status,
         string $filePath,
         \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
     ) {
-        $this->uuid = Uuid::v4();
+        $this->uuid = $uuid;
         $this->status = $status;
         $this->filePath = $filePath;
         $this->createdAt = $createdAt;

@@ -22,4 +22,25 @@ final class OrderItemRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, OrderItem::class);
     }
+
+    public function findAllSoldItems(?\DateTimeImmutable $from = null, ?\DateTimeImmutable $to = null): array
+    {
+        $builder = $this->createQueryBuilder('oi')
+            ->innerJoin('oi.product', 'p')
+            ->innerJoin('oi.order', 'o')
+            ->innerJoin('o.user', 'u')
+            ->addSelect('p', 'u', 'o');
+
+        if ($from !== null) {
+            $builder->andWhere('o.createdAt >= :from')
+                ->setParameter('from', $from);
+        }
+
+        if ($to !== null) {
+            $builder->andWhere('o.createdAt <= :to')
+                ->setParameter('to', $to);
+        }
+
+        return $builder->getQuery()->getResult();
+    }
 }
